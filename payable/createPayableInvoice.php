@@ -15,9 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-
-
-
+echo "<pre>";print_r($value);die;
 
 $xmllinesTax = '';
 
@@ -88,7 +86,7 @@ foreach($value['invoice_lines'] as $lines)
         <TEMPRATE>".number_format($lines['unit_price'],2,'.',',')."</TEMPRATE>
         <BATCHALLOCATIONS.LIST>       </BATCHALLOCATIONS.LIST>
         <ACCOUNTINGALLOCATIONS.LIST>
-        <LEDGERNAME>Purchase A/C for Metrics</LEDGERNAME>
+        <LEDGERNAME>".$value['purchase_ledger']."</LEDGERNAME>
         <GSTCLASS/>
         <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
         <LEDGERFROMITEM>No</LEDGERFROMITEM>
@@ -138,26 +136,22 @@ $xml.= '<ENVELOPE>
   <REQUESTDESC>
    <REPORTNAME>Vouchers</REPORTNAME>
    <STATICVARIABLES>
-    <SVCURRENTCOMPANY>Metrics</SVCURRENTCOMPANY>
+    <SVCURRENTCOMPANY>'.$value['organization'].'</SVCURRENTCOMPANY>
    </STATICVARIABLES>
   </REQUESTDESC>
   <REQUESTDATA>
    <TALLYMESSAGE xmlns:UDF="TallyUDF">
     <VOUCHER VCHTYPE="Purchase" ACTION="Create" OBJVIEW="Invoice Voucher View">
      <ADDRESS.LIST TYPE="String">
-      <ADDRESS>'.$value['vendor_addr1'].','.$value['vendor_addr2'].'</ADDRESS>
+      <ADDRESS>'.$value['vendor_addr1'].'</ADDRESS>
       <ADDRESS>'.$value['vendor_city'].'</ADDRESS>
      </ADDRESS.LIST>
      <DATE>20220801</DATE>
-     <REFERENCEDATE>20220801</REFERENCEDATE>
-     <BILLOFLADINGDATE>20220801</BILLOFLADINGDATE>
      <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
      <STATENAME>'.$value['vendor_state'].'</STATENAME>
      <VOUCHERTYPENAME>Purchase</VOUCHERTYPENAME>
-     <NARRATION>Narration section</NARRATION>
-     <COUNTRYOFRESIDENCE>India</COUNTRYOFRESIDENCE>
-     <PARTYGSTIN>GSTIN NO22</PARTYGSTIN>
+     <COUNTRYOFRESIDENCE>'.$value['vendor_country'].'</COUNTRYOFRESIDENCE>
      <PLACEOFSUPPLY>'.$value['vendor_state'].'</PLACEOFSUPPLY>
      <CLASSNAME/>
      <PARTYNAME>'.$value['vendor_name'].'</PARTYNAME>
@@ -166,23 +160,14 @@ $xml.= '<ENVELOPE>
      <REFERENCE>'.$value['invoice_code'].'</REFERENCE>
      <PARTYMAILINGNAME>'.$value['vendor_name'].'</PARTYMAILINGNAME>
      <PARTYPINCODE>'.$value['vendor_postcode'].'</PARTYPINCODE>
-     <CONSIGNEEGSTIN>18AABCU9603R1ZM</CONSIGNEEGSTIN>
-     <CONSIGNEEMAILINGNAME>Metrics</CONSIGNEEMAILINGNAME>
-     <CONSIGNEESTATENAME>West Bengal</CONSIGNEESTATENAME>
-     <VOUCHERNUMBER>3</VOUCHERNUMBER>
+     <CONSIGNEEMAILINGNAME>'.$value['vendor_name'].'</CONSIGNEEMAILINGNAME>
+     <CONSIGNEESTATENAME>'.$value['vendor_state'].'</CONSIGNEESTATENAME>
      <BASICBASEPARTYNAME>'.$value['vendor_name'].'</BASICBASEPARTYNAME>
      <CSTFORMISSUETYPE/>
      <CSTFORMRECVTYPE/>
      <PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>
-     <BILLOFLADINGNO>LR-RR-No</BILLOFLADINGNO>
-     <EICHECKPOST>Agent Name</EICHECKPOST>
-     <BASICSHIPPEDBY>Ekart Logistics</BASICSHIPPEDBY>
-     <BASICBUYERNAME>Metrics</BASICBUYERNAME>
-     <BASICSHIPDOCUMENTNO>Doc No</BASICSHIPDOCUMENTNO>
-     <BASICFINALDESTINATION>Destination</BASICFINALDESTINATION>
-     <BASICSHIPVESSELNO>Vehical No</BASICSHIPVESSELNO>
      <PARTYADDRESSTYPE/>
-     <CONSIGNEECOUNTRYNAME>India</CONSIGNEECOUNTRYNAME>
+     <CONSIGNEECOUNTRYNAME>'.$value['vendor_country'].'</CONSIGNEECOUNTRYNAME>
      <VCHGSTCLASS/>
      <VCHENTRYMODE>Item Invoice</VCHENTRYMODE>
      <DIFFACTUALQTY>No</DIFFACTUALQTY>
@@ -190,7 +175,6 @@ $xml.= '<ENVELOPE>
      <ASORIGINAL>No</ASORIGINAL>
      <FORJOBCOSTING>No</FORJOBCOSTING>
      <ISOPTIONAL>No</ISOPTIONAL>
-     <EFFECTIVEDATE>20220401</EFFECTIVEDATE>
      <USEFOREXCISE>No</USEFOREXCISE>
      <USEFORINTEREST>No</USEFORINTEREST>
      <USEFORGAINLOSS>No</USEFORGAINLOSS>
@@ -224,14 +208,13 @@ $xml.= '<ENVELOPE>
      <ISVATDUTYPAID>Yes</ISVATDUTYPAID>
      <ISDELETEDVCHRETAINED>No</ISDELETEDVCHRETAINED>
      <CURRPARTYLEDGERNAME>'.$value['vendor_name'].'</CURRPARTYLEDGERNAME>
-     <CURRBASICBUYERNAME>Metrics</CURRBASICBUYERNAME>
+     <CURRBASICBUYERNAME>'.$value['vendor_name'].'</CURRBASICBUYERNAME>
      <CURRPARTYNAME>'.$value['vendor_name'].'</CURRPARTYNAME>
      <CURRBUYERADDRESSTYPE/>
      <CURRPARTYADDRESSTYPE/>
      <CURRSTATENAME>'.$value['vendor_state'].'</CURRSTATENAME>
      <CURRBASICSHIPDELIVERYNOTE/>
-     <TEMPGSTVCHDESTINATIONSTATE>West Bengal</TEMPGSTVCHDESTINATIONSTATE>
-     <TEMPGSTPARTYLEDLOCTYPE>Within State</TEMPGSTPARTYLEDLOCTYPE>
+     <TEMPGSTVCHDESTINATIONSTATE>'.$value['vendor_state'].'</TEMPGSTVCHDESTINATIONSTATE>
      <TEMPGSTPARTYDEALERTYPE>Regular</TEMPGSTPARTYDEALERTYPE>
      <EWAYBILLDETAILS.LIST>      </EWAYBILLDETAILS.LIST>
      <EXCLUDEDTAXATIONS.LIST>      </EXCLUDEDTAXATIONS.LIST>
@@ -244,8 +227,8 @@ $xml.= '<ENVELOPE>
      <EWAYBILLERRORLIST.LIST>      </EWAYBILLERRORLIST.LIST>
      <IRNERRORLIST.LIST>      </IRNERRORLIST.LIST>
      <INVOICEDELNOTES.LIST>
-      <BASICSHIPPINGDATE>20220801</BASICSHIPPINGDATE>
-      <BASICSHIPDELIVERYNOTE>Receipt Note No</BASICSHIPDELIVERYNOTE>
+      <BASICSHIPPINGDATE></BASICSHIPPINGDATE>
+      <BASICSHIPDELIVERYNOTE></BASICSHIPDELIVERYNOTE>
      </INVOICEDELNOTES.LIST>
      <INVOICEORDERLIST.LIST>      </INVOICEORDERLIST.LIST>
      <INVOICEINDENTLIST.LIST>      </INVOICEINDENTLIST.LIST>
@@ -299,24 +282,19 @@ $xml.= '<ENVELOPE>
      <GSTEWAYCONSIGNORADDRESS.LIST>      </GSTEWAYCONSIGNORADDRESS.LIST>
      <GSTEWAYCONSIGNEEADDRESS.LIST>      </GSTEWAYCONSIGNEEADDRESS.LIST>
      <TEMPGSTRATEDETAILS.LIST>      </TEMPGSTRATEDETAILS.LIST>
-     <UDF:VATGRNDATE.LIST DESC="`VAT GRNDate`" ISLIST="YES" TYPE="Date" INDEX="10005">
-      <UDF:VATGRNDATE DESC="`VAT GRNDate`">20220801</UDF:VATGRNDATE>
-     </UDF:VATGRNDATE.LIST>
     </VOUCHER>
    </TALLYMESSAGE>
    <TALLYMESSAGE xmlns:UDF="TallyUDF">
     <COMPANY>
      <REMOTECMPINFO.LIST MERGE="Yes">
-      <REMOTECMPNAME>Metrics</REMOTECMPNAME>
-      <REMOTECMPSTATE>West Bengal</REMOTECMPSTATE>
+      <REMOTECMPNAME>'.$value['organization'].'</REMOTECMPNAME>
      </REMOTECMPINFO.LIST>
     </COMPANY>
    </TALLYMESSAGE>
    <TALLYMESSAGE xmlns:UDF="TallyUDF">
     <COMPANY>
      <REMOTECMPINFO.LIST MERGE="Yes">
-      <REMOTECMPNAME>Metrics</REMOTECMPNAME>
-      <REMOTECMPSTATE>West Bengal</REMOTECMPSTATE>
+      <REMOTECMPNAME>'.$value['organization'].'</REMOTECMPNAME>
      </REMOTECMPINFO.LIST>
     </COMPANY>
    </TALLYMESSAGE>
@@ -346,28 +324,40 @@ $xml.= '<ENVELOPE>
 
     curl_close($curl);
 
+    //echo $response;die;
+
    
     if ($err) {
       //echo "cURL Error #:" . $err;
       print_r(json_encode(array('status' => '0','msg' =>$err)));
     } else {
-        //echo  $response1;
-        $xmlResponse = simplexml_load_string($response);
-        $json = json_encode($xmlResponse);
-        $decode = json_decode($json);
+      $xmlResponse = simplexml_load_string($response);
+      $json = json_encode($xmlResponse);
+      $decode = json_decode($json,true);
 
-        if($decode->CREATED == '1')
-        {
+      //print_r($decode['LINEERROR']);die;
 
-          print_r(json_encode(array('status' => '1','guid'=>'1')));
-        }elseif($decode->ERRORS == '1') {
+      if(array_key_exists("LINEERROR",$decode))
+      {
+        //array_push($errorDataArray,'Error : '.$decode['LINEERROR']);
+        print_r(json_encode(array('status' => '0','msg'=>$decode['LINEERROR'])));
 
-          print_r(json_encode(array('status' => '0','msg'=>$decode->LINEERROR)));
-        }else {
-          
-          print_r(json_encode(array('status' => '0','msg'=>'Something went wrong, please try sometimes later')));
-        }
-        
+      }else {
+
+         if($decode['CREATED'] == '1'|| $decode['ALTERED'] == '1' )
+         {
+ 
+           print_r(json_encode(array('status' => '1','guid'=>'1'.'+'.$value['organization_id'])));
+         }elseif($decode['ERRORS'] == '1') {
+ 
+           print_r(json_encode(array('status' => '0','msg'=>$decode['LINEERROR'])));
+         }else {
+           
+           print_r(json_encode(array('status' => '0','msg'=>'Something went wrong, please try sometimes later')));
+         }
+
+      }
+       
         
     }
   

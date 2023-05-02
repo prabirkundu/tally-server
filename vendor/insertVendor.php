@@ -15,20 +15,20 @@
 
         exit(0);
     }
-    //print_r($_POST);
+    //print_r($_POST);die;
     // $value = $_POST;
 
-    $organizations = $_POST['organizations'];
+    $business_unit = $_POST['business_unit'];
 
     //echo"<pre>";print_r($organizations);die;
     $errorDataArray = [];
     $successDataArray = [];
 
 
-    foreach($organizations as $org)
+    foreach($business_unit as $company)
     {
         $value = $_POST['data'];
-        $org_name = $org['org_name'];
+        $company_name = $company['unit_description'];
 
         $xml = '<ENVELOPE>
         <HEADER>
@@ -39,7 +39,7 @@
         <REQUESTDESC>
         <REPORTNAME>All Masters</REPORTNAME>
         <STATICVARIABLES>
-        <SVCURRENTCOMPANY>'. $org_name.'</SVCURRENTCOMPANY>
+        <SVCURRENTCOMPANY>'.$company_name.'</SVCURRENTCOMPANY>
         </STATICVARIABLES>
         </REQUESTDESC>
         <REQUESTDATA>
@@ -55,13 +55,14 @@
             <EMAIL>'.$value['vendor_contact_email'].'</EMAIL>
             <PRIORSTATENAME>'.$value['vendor_state'].'</PRIORSTATENAME>
             <PINCODE>'.$value['vendor_postcode'].'</PINCODE>
-            <COUNTRYNAME>India</COUNTRYNAME>
+            <COUNTRYNAME>'.$value['country_name'].'</COUNTRYNAME>
             <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
             <VATDEALERTYPE>Regular</VATDEALERTYPE>
             <PARENT>Sundry Creditors</PARENT>
-            <COUNTRYOFRESIDENCE>India</COUNTRYOFRESIDENCE>
+            <COUNTRYOFRESIDENCE>'.$value['country_name'].'</COUNTRYOFRESIDENCE>
             <LEDGERPHONE>'.$value['vendor_contact_primary'].'</LEDGERPHONE>
-            <LEDGERCONTACT>'.$value['vendor_name'].'</LEDGERCONTACT>
+            <LEDGERCONTACT>'.$value['vendor_contact_fname'].' '.$value['vendor_contact_lname'].'</LEDGERCONTACT>
+            <PARTYGSTIN>'.$_POST['vendor_gst'].'</PARTYGSTIN>
             <LEDSTATENAME>'.$value['vendor_state'].'</LEDSTATENAME>
             <LANGUAGENAME.LIST>
             <NAME.LIST TYPE="String">
@@ -72,14 +73,14 @@
             <TALLYMESSAGE xmlns:UDF="TallyUDF">
             <COMPANY>
             <REMOTECMPINFO.LIST MERGE="Yes">
-            <REMOTECMPNAME>'.$org_name.'</REMOTECMPNAME>
+            <REMOTECMPNAME>'.$company_name.'</REMOTECMPNAME>
             </REMOTECMPINFO.LIST>
             </COMPANY>
         </TALLYMESSAGE>
         <TALLYMESSAGE xmlns:UDF="TallyUDF">
             <COMPANY>
             <REMOTECMPINFO.LIST MERGE="Yes">
-            <REMOTECMPNAME>'.$org_name.'</REMOTECMPNAME>
+            <REMOTECMPNAME>'.$company_name.'</REMOTECMPNAME>
             </REMOTECMPINFO.LIST>
             </COMPANY>
         </TALLYMESSAGE>
@@ -155,7 +156,7 @@
                             array_push($errorDataArray,'Error : '.$decode['LINEERROR']);
                         } else {
                             //print_r(json_encode(array('status' => '1','guid'=>$response1)));
-                            array_push($successDataArray,$response1.'+'.$org['org_id']);
+                            array_push($successDataArray,$response1.'+'.$company['unit_id']);
                         }
             
                 }else {

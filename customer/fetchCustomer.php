@@ -4,14 +4,22 @@
     //print_r();die;
     if ($conn) {
         $mailingName = '$MailingName';
-        $query = odbc_exec($conn, "SELECT * FROM LEDGER WHERE `$mailingName` = '". $array."'");
-        // while($row = odbc_fetch_array($query)){
-        // echo "<pre>";print_r($row);
-        // };
-        $row = odbc_fetch_array($query);
-        print_r($row['$Guid']);    
+
+        try {
+            $query = odbc_exec($conn, "SELECT * FROM LEDGER WHERE `$mailingName` = '". $array."'");
+            $row = odbc_fetch_array($query);
+            $result = $row['$Guid'];
+            print_r($result);   
+        }catch(Exception $e) {
+            echo '1';
+        }
+        //print_r($result);    
     }else{
         echo "connection lost";
     }
+
+    // while($row = odbc_fetch_array($query)){
+    // echo "<pre>";print_r($row);
+    // };
 
 ?>

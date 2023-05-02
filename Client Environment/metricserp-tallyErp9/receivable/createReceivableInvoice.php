@@ -18,12 +18,7 @@
     //echo "1";print_r($_POST);die;
     //$array = $_POST;
 
-    $data = array(
-        'data' => $_POST['data'],
-        'business_unit' => $_POST['business_unit'],
-        'customer_gst' => $_POST['customer_gst'],
-
-    );
+    $data = $_POST;
     
     // Convert array to query string
     $post_fields = http_build_query($data);
@@ -32,7 +27,7 @@
     $curl = curl_init();
     
     // Set curl options
-    curl_setopt($curl, CURLOPT_URL, 'http://'.$_POST['tally_server_ip'].'/metricserp-tallyErp9/customer/insertCustomer.php');
+    curl_setopt($curl, CURLOPT_URL, 'http://'.$_POST['tally_server_ip'].'/metricserp-tallyErp9/receivable/createReceivableInvoice.php');
     curl_setopt($curl, CURLOPT_POST, 1);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $post_fields);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

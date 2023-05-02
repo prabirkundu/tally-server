@@ -15,28 +15,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-//echo "<pre>";print_r($value);die;
-$date=date_create($value['invoice_date']);
-$invoice_date = date_format($date,"Ymd");
- 
+//print_r($value);die;
 
 $xmllinesTax = '';
 
 foreach($value['invoice_tax'] as $linesTax)
 {
-    $xmllinesTax.= 
-    "<LEDGERENTRIES.LIST>
+    $xmllinesTax.= "<LEDGERENTRIES.LIST>
     <ROUNDTYPE/>
-    <LEDGERNAME>".$linesTax['tax_code']."</LEDGERNAME>
+    <LEDGERNAME>".$linesTax["tax_code"]."</LEDGERNAME>
     <VOUCHERFBTCATEGORY/>
     <GSTCLASS/>
-    <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+    <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
     <LEDGERFROMITEM>No</LEDGERFROMITEM>
     <ISPARTYLEDGER>No</ISPARTYLEDGER>
-    <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
+    <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
     <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-    <AMOUNT>".$linesTax["tax_value"]."</AMOUNT>
-    <VATEXPAMOUNT>".$linesTax["tax_value"]."</VATEXPAMOUNT>
+    <AMOUNT>-".$linesTax["tax_value"]."</AMOUNT>
+    <VATEXPAMOUNT>-".$linesTax["tax_value"]."</VATEXPAMOUNT>
     <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
     <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
     <BILLALLOCATIONS.LIST>       </BILLALLOCATIONS.LIST>
@@ -61,41 +57,38 @@ foreach($value['invoice_tax'] as $linesTax)
     <VATITCDETAILS.LIST>       </VATITCDETAILS.LIST>
     <ADVANCETAXDETAILS.LIST>       </ADVANCETAXDETAILS.LIST>
    </LEDGERENTRIES.LIST>";
-}
 
+}
 
 $xmllines = '';
 
 foreach($value['invoice_lines'] as $lines)
 {
-    //$quentity = floatval($lines['quantity']);
+    $quentity = floatval($lines['quantity']);
 
-    $xmllines.= "<ALLINVENTORYENTRIES.LIST>
-    <BASICUSERDESCRIPTION.LIST TYPE='String'>
-      <BASICUSERDESCRIPTION>".$lines['description']."</BASICUSERDESCRIPTION>
-    </BASICUSERDESCRIPTION.LIST>
+    $xmllines.="<ALLINVENTORYENTRIES.LIST>
     <STOCKITEMNAME>Item-1</STOCKITEMNAME>
-    <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
-    <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
+    <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
+    <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
     <ISAUTONEGATE>No</ISAUTONEGATE>
     <ISSCRAP>No</ISSCRAP>
     <RATE>".number_format($lines['unit_price'],2,'.',',')."</RATE>
-    <DISCOUNT>".$lines['discount_percentage']."</DISCOUNT>
-    <AMOUNT>".number_format($lines['line_amount'],2,'.',',')."</AMOUNT>
-    <ACTUALQTY>".$lines['quantity']."</ACTUALQTY>
-    <BILLEDQTY>".$lines['quantity']."</BILLEDQTY>
+    <DISCOUNT> ".$lines['discount_percentage']."</DISCOUNT>
+    <AMOUNT>-".number_format($lines['line_amount'],2,'.',',')."</AMOUNT>
+    <ACTUALQTY> ".$lines['quantity']."</ACTUALQTY>
+    <BILLEDQTY> ".$lines['quantity']."</BILLEDQTY>
     <ISINCLTAXRATEFIELDEDITED>No</ISINCLTAXRATEFIELDEDITED>
     <TEMPRATE> ".number_format($lines['unit_price'],2,'.',',')."</TEMPRATE>
     <BATCHALLOCATIONS.LIST>       </BATCHALLOCATIONS.LIST>
     <ACCOUNTINGALLOCATIONS.LIST>
-     <LEDGERNAME>".$lines['account_code_description']."</LEDGERNAME>
+    <LEDGERNAME>".$lines['account_code_description']."</LEDGERNAME>
      <GSTCLASS/>
-     <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
+     <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
      <LEDGERFROMITEM>No</LEDGERFROMITEM>
      <ISPARTYLEDGER>No</ISPARTYLEDGER>
-     <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
+     <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
      <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-     <AMOUNT>".number_format($lines['line_amount'],2,'.',',')."</AMOUNT>
+     <AMOUNT>-".number_format($lines['line_amount'],2,'.',',')."</AMOUNT>
      <SERVICETAXDETAILS.LIST>        </SERVICETAXDETAILS.LIST>
      <BANKALLOCATIONS.LIST>        </BANKALLOCATIONS.LIST>
      <BILLALLOCATIONS.LIST>        </BILLALLOCATIONS.LIST>
@@ -125,11 +118,11 @@ foreach($value['invoice_lines'] as $lines)
     <REFVOUCHERDETAILS.LIST>       </REFVOUCHERDETAILS.LIST>
     <EXCISEALLOCATIONS.LIST>       </EXCISEALLOCATIONS.LIST>
     <EXPENSEALLOCATIONS.LIST>       </EXPENSEALLOCATIONS.LIST>
-    </ALLINVENTORYENTRIES.LIST>";   
-}    
+   </ALLINVENTORYENTRIES.LIST>";
+}
 
-$xml = '';
-$xml.="<ENVELOPE>
+$xml = "";
+$xml.= "<ENVELOPE>
 <HEADER>
  <TALLYREQUEST>Import Data</TALLYREQUEST>
 </HEADER>
@@ -143,7 +136,7 @@ $xml.="<ENVELOPE>
   </REQUESTDESC>
   <REQUESTDATA>
    <TALLYMESSAGE xmlns:UDF='TallyUDF'>
-    <VOUCHER REMOTEID='' VCHTYPE='Sales' ACTION='Create' OBJVIEW='Invoice Voucher View'>
+    <VOUCHER VCHTYPE='Credit Note' ACTION='Create' OBJVIEW='Invoice Voucher View'>
      <ADDRESS.LIST TYPE='String'>
       <ADDRESS>".$value['customer_site_addr1']."</ADDRESS>
       <ADDRESS>".$value['customer_site_city']."</ADDRESS>
@@ -153,29 +146,42 @@ $xml.="<ENVELOPE>
       <BASICBUYERADDRESS>".$value['customer_site_city']."</BASICBUYERADDRESS>
      </BASICBUYERADDRESS.LIST>
      <DATE>20220801</DATE>
+     <REFERENCEDATE>20220801</REFERENCEDATE>
+     <VATPARTYTRANSRETURNDATE></VATPARTYTRANSRETURNDATE>
+     <BILLOFLADINGDATE></BILLOFLADINGDATE>
+     <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
      <STATENAME>".$value['customer_site_state']."</STATENAME>
-     <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
-     <COUNTRYOFRESIDENCE>".$value['customer_country']."</COUNTRYOFRESIDENCE>
-     <PARTYGSTIN>".$value['customer_gst']."</PARTYGSTIN>
+     <VOUCHERTYPENAME>Credit Note</VOUCHERTYPENAME>
+     <NARRATION>narration</NARRATION>
+     <COUNTRYOFRESIDENCE>".$value['country_name']."</COUNTRYOFRESIDENCE>
+     <PARTYGSTIN>CUSTOMER GST</PARTYGSTIN>
      <PLACEOFSUPPLY>".$value['customer_site_state']."</PLACEOFSUPPLY>
      <CLASSNAME/>
      <PARTYNAME>".$value['customer_name']."</PARTYNAME>
      <PARTYLEDGERNAME>".$value['customer_name']."</PARTYLEDGERNAME>
      <BUYERADDRESSTYPE/>
+     <VATPARTYTRANSRETURNNUMBER></VATPARTYTRANSRETURNNUMBER>
+     <GSTNATUREOFRETURN>07-Others</GSTNATUREOFRETURN>
+     <REFERENCE>Invoice No</REFERENCE>
      <PARTYMAILINGNAME>".$value['customer_name']."</PARTYMAILINGNAME>
      <PARTYPINCODE>".$value['customer_site_postcode']."</PARTYPINCODE>
      <CONSIGNEEMAILINGNAME>".$value['customer_name']."</CONSIGNEEMAILINGNAME>
      <CONSIGNEEPINCODE>".$value['customer_site_postcode']."</CONSIGNEEPINCODE>
      <CONSIGNEESTATENAME>".$value['customer_site_state']."</CONSIGNEESTATENAME>
-     <VOUCHERNUMBER>".$value['customer_site_postcode']."</VOUCHERNUMBER>
      <BASICBASEPARTYNAME>".$value['customer_name']."</BASICBASEPARTYNAME>
      <CSTFORMISSUETYPE/>
      <CSTFORMRECVTYPE/>
      <PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>
+     <BILLOFLADINGNO>Bill of Lading</BILLOFLADINGNO>
+     <EICHECKPOST>Agent Name</EICHECKPOST>
+     <BASICSHIPPEDBY>Ekart</BASICSHIPPEDBY>
      <BASICBUYERNAME>".$value['customer_name']."</BASICBUYERNAME>
+     <BASICSHIPDOCUMENTNO>Dispact Doc No</BASICSHIPDOCUMENTNO>
+     <BASICFINALDESTINATION>Destination</BASICFINALDESTINATION>
+     <BASICSHIPVESSELNO>Vehical No</BASICSHIPVESSELNO>
      <PARTYADDRESSTYPE/>
-     <CONSIGNEECOUNTRYNAME>".$value['customer_country']."</CONSIGNEECOUNTRYNAME>
+     <CONSIGNEECOUNTRYNAME>".$value['country_name']."</CONSIGNEECOUNTRYNAME>
      <VCHGSTCLASS/>
      <VCHENTRYMODE>Item Invoice</VCHENTRYMODE>
      <DIFFACTUALQTY>No</DIFFACTUALQTY>
@@ -211,7 +217,6 @@ $xml.="<ENVELOPE>
      <ASPAYSLIP>No</ASPAYSLIP>
      <ISCOSTCENTRE>No</ISCOSTCENTRE>
      <ISSTXNONREALIZEDVCH>No</ISSTXNONREALIZEDVCH>
-     <ISBLANKCHEQUE>No</ISBLANKCHEQUE>
      <ISVOID>No</ISVOID>
      <ORDERLINESTATUS>No</ORDERLINESTATUS>
      <ISVATDUTYPAID>Yes</ISVATDUTYPAID>
@@ -224,16 +229,21 @@ $xml.="<ENVELOPE>
      <CURRSTATENAME>".$value['customer_site_state']."</CURRSTATENAME>
      <CURRBASICSHIPDELIVERYNOTE/>
      <TEMPGSTVCHDESTINATIONSTATE>".$value['customer_site_state']."</TEMPGSTVCHDESTINATIONSTATE>
+     <TEMPGSTPARTYDEALERTYPE>Regular</TEMPGSTPARTYDEALERTYPE>
      <EWAYBILLDETAILS.LIST>      </EWAYBILLDETAILS.LIST>
      <EXCLUDEDTAXATIONS.LIST>      </EXCLUDEDTAXATIONS.LIST>
      <OLDAUDITENTRIES.LIST>      </OLDAUDITENTRIES.LIST>
      <ACCOUNTAUDITENTRIES.LIST>      </ACCOUNTAUDITENTRIES.LIST>
      <AUDITENTRIES.LIST>      </AUDITENTRIES.LIST>
      <DUTYHEADDETAILS.LIST>      </DUTYHEADDETAILS.LIST>
-    ".$xmllines."
+     ".$xmllines."
      <SUPPLEMENTARYDUTYHEADDETAILS.LIST>      </SUPPLEMENTARYDUTYHEADDETAILS.LIST>
      <EWAYBILLERRORLIST.LIST>      </EWAYBILLERRORLIST.LIST>
      <IRNERRORLIST.LIST>      </IRNERRORLIST.LIST>
+     <INVOICEDELNOTES.LIST>
+      <BASICSHIPPINGDATE>20220801</BASICSHIPPINGDATE>
+      <BASICSHIPDELIVERYNOTE></BASICSHIPDELIVERYNOTE>
+     </INVOICEDELNOTES.LIST>
      <INVOICEORDERLIST.LIST>      </INVOICEORDERLIST.LIST>
      <INVOICEINDENTLIST.LIST>      </INVOICEINDENTLIST.LIST>
      <ATTENDANCEENTRIES.LIST>      </ATTENDANCEENTRIES.LIST>
@@ -242,19 +252,19 @@ $xml.="<ENVELOPE>
      <LEDGERENTRIES.LIST>
       <LEDGERNAME>".$value['customer_name']."</LEDGERNAME>
       <GSTCLASS/>
-      <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
+      <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
       <LEDGERFROMITEM>No</LEDGERFROMITEM>
       <ISPARTYLEDGER>No</ISPARTYLEDGER>
-      <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
+      <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
       <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-      <AMOUNT>-".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
+      <AMOUNT>".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
       <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
       <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
       <BILLALLOCATIONS.LIST>
        <NAME>".$value['invoice_code']."</NAME>
        <BILLTYPE>New Ref</BILLTYPE>
        <TDSDEDUCTEEISSPECIALRATE>No</TDSDEDUCTEEISSPECIALRATE>
-       <AMOUNT>-".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
+       <AMOUNT>".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
        <INTERESTCOLLECTION.LIST>        </INTERESTCOLLECTION.LIST>
        <STBILLCATEGORIES.LIST>        </STBILLCATEGORIES.LIST>
       </BILLALLOCATIONS.LIST>
@@ -280,6 +290,7 @@ $xml.="<ENVELOPE>
       <ADVANCETAXDETAILS.LIST>       </ADVANCETAXDETAILS.LIST>
      </LEDGERENTRIES.LIST>
      ".$xmllinesTax."
+     <CONTRIBUTEDVCHENTRIES.LIST>      </CONTRIBUTEDVCHENTRIES.LIST>
      <VCHLEDTOTALTREE.LIST>      </VCHLEDTOTALTREE.LIST>
      <PAYROLLMODEOFPAYMENT.LIST>      </PAYROLLMODEOFPAYMENT.LIST>
      <ATTDRECORDS.LIST>      </ATTDRECORDS.LIST>
@@ -307,7 +318,7 @@ $xml.="<ENVELOPE>
 </BODY>
 </ENVELOPE>";
 
-//print_r($xml);die;
+//echo $xml;die;
 
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -327,9 +338,6 @@ $xml.="<ENVELOPE>
 
     curl_close($curl);
 
-    //echo  $response;die;
-
-    
     if ($err) {
       //echo "cURL Error #:" . $err;
       print_r(json_encode(array('status' => '0','msg' =>$err)));
@@ -337,31 +345,34 @@ $xml.="<ENVELOPE>
       $xmlResponse = simplexml_load_string($response);
       $json = json_encode($xmlResponse);
       $decode = json_decode($json,true);
-
+    
       if(array_key_exists("LINEERROR",$decode))
       {
         //array_push($errorDataArray,'Error : '.$decode['LINEERROR']);
         print_r(json_encode(array('status' => '0','msg'=>$decode['LINEERROR'])));
-
+    
       }else {
-
+    
          //echo  $response1;
- 
+    
          if($decode['CREATED'] == '1'|| $decode['ALTERED'] == '1' )
          {
- 
+    
            print_r(json_encode(array('status' => '1','guid'=>'1'.'+'.$value['unit_id'].'+'.$value['organization_id'])));
          }elseif($decode->ERRORS == '1') {
- 
+    
            print_r(json_encode(array('status' => '0','msg'=>$decode['LINEERROR'])));
          }else {
            
            print_r(json_encode(array('status' => '0','msg'=>'Something went wrong, please try sometimes later')));
          }
-
+    
       }
        
         
-    }
+   }
+    
+?>
+
 
 ?>

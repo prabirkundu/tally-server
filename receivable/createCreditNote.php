@@ -81,7 +81,7 @@ foreach($value['invoice_lines'] as $lines)
     <TEMPRATE> ".number_format($lines['unit_price'],2,'.',',')."</TEMPRATE>
     <BATCHALLOCATIONS.LIST>       </BATCHALLOCATIONS.LIST>
     <ACCOUNTINGALLOCATIONS.LIST>
-     <LEDGERNAME>Sales A/c</LEDGERNAME>
+    <LEDGERNAME>".$lines['account_code_description']."</LEDGERNAME>
      <GSTCLASS/>
      <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
      <LEDGERFROMITEM>No</LEDGERFROMITEM>
@@ -131,58 +131,57 @@ $xml.= "<ENVELOPE>
   <REQUESTDESC>
    <REPORTNAME>Vouchers</REPORTNAME>
    <STATICVARIABLES>
-    <SVCURRENTCOMPANY>Metrics</SVCURRENTCOMPANY>
+    <SVCURRENTCOMPANY>".$value['unit_description']."</SVCURRENTCOMPANY>
    </STATICVARIABLES>
   </REQUESTDESC>
   <REQUESTDATA>
    <TALLYMESSAGE xmlns:UDF='TallyUDF'>
     <VOUCHER VCHTYPE='Credit Note' ACTION='Create' OBJVIEW='Invoice Voucher View'>
      <ADDRESS.LIST TYPE='String'>
-      <ADDRESS>".$value['customer_site_addr1'].",". $value['customer_site_addr2']."</ADDRESS>
+      <ADDRESS>".$value['customer_site_addr1']."</ADDRESS>
       <ADDRESS>".$value['customer_site_city']."</ADDRESS>
      </ADDRESS.LIST>
      <BASICBUYERADDRESS.LIST TYPE='String'>
-      <BASICBUYERADDRESS>".$value['customer_site_addr1'].",". $value['customer_site_addr2']."</BASICBUYERADDRESS>
+      <BASICBUYERADDRESS>".$value['customer_site_addr1']."</BASICBUYERADDRESS>
       <BASICBUYERADDRESS>".$value['customer_site_city']."</BASICBUYERADDRESS>
      </BASICBUYERADDRESS.LIST>
      <DATE>20220801</DATE>
      <REFERENCEDATE>20220801</REFERENCEDATE>
-     <VATPARTYTRANSRETURNDATE>20220401</VATPARTYTRANSRETURNDATE>
-     <BILLOFLADINGDATE>20220401</BILLOFLADINGDATE>
+     <VATPARTYTRANSRETURNDATE></VATPARTYTRANSRETURNDATE>
+     <BILLOFLADINGDATE></BILLOFLADINGDATE>
      <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
-     <STATENAME>West Bengal</STATENAME>
+     <STATENAME>".$value['customer_site_state']."</STATENAME>
      <VOUCHERTYPENAME>Credit Note</VOUCHERTYPENAME>
      <NARRATION>narration</NARRATION>
-     <COUNTRYOFRESIDENCE>India</COUNTRYOFRESIDENCE>
-     <PARTYGSTIN>CUSTOMER GST</PARTYGSTIN>
+     <COUNTRYOFRESIDENCE>".$value['customer_country']."</COUNTRYOFRESIDENCE>
+     <PARTYGSTIN>".$value['customer_gst']."</PARTYGSTIN>
      <PLACEOFSUPPLY>".$value['customer_site_state']."</PLACEOFSUPPLY>
      <CLASSNAME/>
      <PARTYNAME>".$value['customer_name']."</PARTYNAME>
      <PARTYLEDGERNAME>".$value['customer_name']."</PARTYLEDGERNAME>
      <BUYERADDRESSTYPE/>
-     <VATPARTYTRANSRETURNNUMBER>Buyer&apos;s Debit No</VATPARTYTRANSRETURNNUMBER>
-     <GSTNATUREOFRETURN>07-Others</GSTNATUREOFRETURN>
+     <VATPARTYTRANSRETURNNUMBER></VATPARTYTRANSRETURNNUMBER>
+     <GSTNATUREOFRETURN></GSTNATUREOFRETURN>
      <REFERENCE>Invoice No</REFERENCE>
      <PARTYMAILINGNAME>".$value['customer_name']."</PARTYMAILINGNAME>
      <PARTYPINCODE>".$value['customer_site_postcode']."</PARTYPINCODE>
      <CONSIGNEEMAILINGNAME>".$value['customer_name']."</CONSIGNEEMAILINGNAME>
      <CONSIGNEEPINCODE>".$value['customer_site_postcode']."</CONSIGNEEPINCODE>
-     <CONSIGNEESTATENAME>West Bengal</CONSIGNEESTATENAME>
-     <VOUCHERNUMBER>1</VOUCHERNUMBER>
+     <CONSIGNEESTATENAME>".$value['customer_site_state']."</CONSIGNEESTATENAME>
      <BASICBASEPARTYNAME>".$value['customer_name']."</BASICBASEPARTYNAME>
      <CSTFORMISSUETYPE/>
      <CSTFORMRECVTYPE/>
      <PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>
-     <BILLOFLADINGNO>Bill of Lading</BILLOFLADINGNO>
-     <EICHECKPOST>Agent Name</EICHECKPOST>
-     <BASICSHIPPEDBY>Ekart</BASICSHIPPEDBY>
+     <BILLOFLADINGNO></BILLOFLADINGNO>
+     <EICHECKPOST></EICHECKPOST>
+     <BASICSHIPPEDBY></BASICSHIPPEDBY>
      <BASICBUYERNAME>".$value['customer_name']."</BASICBUYERNAME>
-     <BASICSHIPDOCUMENTNO>Dispact Doc No</BASICSHIPDOCUMENTNO>
-     <BASICFINALDESTINATION>Destination</BASICFINALDESTINATION>
-     <BASICSHIPVESSELNO>Vehical No</BASICSHIPVESSELNO>
+     <BASICSHIPDOCUMENTNO></BASICSHIPDOCUMENTNO>
+     <BASICFINALDESTINATION></BASICFINALDESTINATION>
+     <BASICSHIPVESSELNO></BASICSHIPVESSELNO>
      <PARTYADDRESSTYPE/>
-     <CONSIGNEECOUNTRYNAME>India</CONSIGNEECOUNTRYNAME>
+     <CONSIGNEECOUNTRYNAME>".$value['customer_country']."</CONSIGNEECOUNTRYNAME>
      <VCHGSTCLASS/>
      <VCHENTRYMODE>Item Invoice</VCHENTRYMODE>
      <DIFFACTUALQTY>No</DIFFACTUALQTY>
@@ -227,10 +226,9 @@ $xml.= "<ENVELOPE>
      <CURRPARTYNAME>".$value['customer_name']."</CURRPARTYNAME>
      <CURRBUYERADDRESSTYPE/>
      <CURRPARTYADDRESSTYPE/>
-     <CURRSTATENAME>West Bengal</CURRSTATENAME>
+     <CURRSTATENAME>".$value['customer_site_state']."</CURRSTATENAME>
      <CURRBASICSHIPDELIVERYNOTE/>
      <TEMPGSTVCHDESTINATIONSTATE>".$value['customer_site_state']."</TEMPGSTVCHDESTINATIONSTATE>
-     <TEMPGSTPARTYLEDLOCTYPE>Interstate</TEMPGSTPARTYLEDLOCTYPE>
      <TEMPGSTPARTYDEALERTYPE>Regular</TEMPGSTPARTYDEALERTYPE>
      <EWAYBILLDETAILS.LIST>      </EWAYBILLDETAILS.LIST>
      <EXCLUDEDTAXATIONS.LIST>      </EXCLUDEDTAXATIONS.LIST>
@@ -244,7 +242,7 @@ $xml.= "<ENVELOPE>
      <IRNERRORLIST.LIST>      </IRNERRORLIST.LIST>
      <INVOICEDELNOTES.LIST>
       <BASICSHIPPINGDATE>20220801</BASICSHIPPINGDATE>
-      <BASICSHIPDELIVERYNOTE>Tracking No</BASICSHIPDELIVERYNOTE>
+      <BASICSHIPDELIVERYNOTE></BASICSHIPDELIVERYNOTE>
      </INVOICEDELNOTES.LIST>
      <INVOICEORDERLIST.LIST>      </INVOICEORDERLIST.LIST>
      <INVOICEINDENTLIST.LIST>      </INVOICEINDENTLIST.LIST>
@@ -263,8 +261,8 @@ $xml.= "<ENVELOPE>
       <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
       <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
       <BILLALLOCATIONS.LIST>
-       <NAME>1</NAME>
-       <BILLTYPE>Agst Ref</BILLTYPE>
+       <NAME>".$value['invoice_code']."</NAME>
+       <BILLTYPE>New Ref</BILLTYPE>
        <TDSDEDUCTEEISSPECIALRATE>No</TDSDEDUCTEEISSPECIALRATE>
        <AMOUNT>".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
        <INTERESTCOLLECTION.LIST>        </INTERESTCOLLECTION.LIST>
@@ -304,18 +302,14 @@ $xml.= "<ENVELOPE>
    <TALLYMESSAGE xmlns:UDF='TallyUDF'>
     <COMPANY>
      <REMOTECMPINFO.LIST MERGE='Yes'>
-      <NAME>fb23cfa8-7cc6-44c7-8746-2da076e42f67</NAME>
-      <REMOTECMPNAME>Metrics</REMOTECMPNAME>
-      <REMOTECMPSTATE>West Bengal</REMOTECMPSTATE>
+      <REMOTECMPNAME>".$value['unit_description']."</REMOTECMPNAME>
      </REMOTECMPINFO.LIST>
     </COMPANY>
    </TALLYMESSAGE>
    <TALLYMESSAGE xmlns:UDF='TallyUDF'>
     <COMPANY>
      <REMOTECMPINFO.LIST MERGE='Yes'>
-      <NAME>fb23cfa8-7cc6-44c7-8746-2da076e42f67</NAME>
-      <REMOTECMPNAME>Metrics</REMOTECMPNAME>
-      <REMOTECMPSTATE>West Bengal</REMOTECMPSTATE>
+      <REMOTECMPNAME>".$value['unit_description']."</REMOTECMPNAME>
      </REMOTECMPINFO.LIST>
     </COMPANY>
    </TALLYMESSAGE>
@@ -348,25 +342,36 @@ $xml.= "<ENVELOPE>
       //echo "cURL Error #:" . $err;
       print_r(json_encode(array('status' => '0','msg' =>$err)));
     } else {
-        //echo  $response1;
-        $xmlResponse = simplexml_load_string($response);
-        $json = json_encode($xmlResponse);
-        $decode = json_decode($json);
-
-        if($decode->CREATED == '1')
-        {
-
-          print_r(json_encode(array('status' => '1','guid'=>'1')));
-        }elseif($decode->ERRORS == '1') {
-
-          print_r(json_encode(array('status' => '0','msg'=>$decode->LINEERROR)));
-        }else {
-          
-          print_r(json_encode(array('status' => '0','msg'=>'Something went wrong, please try sometimes later')));
-        }
-        
+      $xmlResponse = simplexml_load_string($response);
+      $json = json_encode($xmlResponse);
+      $decode = json_decode($json,true);
+    
+      if(array_key_exists("LINEERROR",$decode))
+      {
+        //array_push($errorDataArray,'Error : '.$decode['LINEERROR']);
+        print_r(json_encode(array('status' => '0','msg'=>$decode['LINEERROR'])));
+    
+      }else {
+    
+         //echo  $response1;
+    
+         if($decode['CREATED'] == '1'|| $decode['ALTERED'] == '1' )
+         {
+    
+           print_r(json_encode(array('status' => '1','guid'=>'1'.'+'.$value['unit_id'].'+'.$value['organization_id'])));
+         }elseif($decode->ERRORS == '1') {
+    
+           print_r(json_encode(array('status' => '0','msg'=>$decode['LINEERROR'])));
+         }else {
+           
+           print_r(json_encode(array('status' => '0','msg'=>'Something went wrong, please try sometimes later')));
+         }
+    
+      }
+       
         
     }
-
-
+    
 ?>
+
+

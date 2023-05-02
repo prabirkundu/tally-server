@@ -20,7 +20,9 @@
 
     $data = array(
         'data' => $_POST['data'],
-        'organizations' => $_POST['organizations'],
+        'business_unit' => $_POST['business_unit'],
+        'vendor_gst' => $_POST['vendor_gst'],
+
     );
     
     // Convert array to query string
