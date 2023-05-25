@@ -26,7 +26,7 @@ $xmllinesTax = '';
 
 foreach($value['invoice_tax'] as $linesTax)
 {
-    $gst = $linesTax['tax_code'];
+    $gst = str_replace("-"," INPUT @ ",$linesTax['tax_code'].'%');
     $xmllinesTax.= 
     "<LEDGERENTRIES.LIST>
         <ADDLALLOCTYPE/>
@@ -154,8 +154,8 @@ $xml.= '<ENVELOPE>
       <ADDRESS>'.$address1.'</ADDRESS>
       <ADDRESS>'.$value['vendor_city'].'</ADDRESS>
      </ADDRESS.LIST>
-     <DATE>20230401</DATE>
-     <REFERENCEDATE>20230401</REFERENCEDATE>
+     <DATE>'.$invoice_date.'</DATE>
+     <REFERENCEDATE>'.$invoice_date.'</REFERENCEDATE>
      <BILLOFLADINGDATE></BILLOFLADINGDATE>
      <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
