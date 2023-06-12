@@ -26,7 +26,7 @@ $xmllinesTax = '';
 
 foreach($value['invoice_tax'] as $linesTax)
 {
-    $gst = $linesTax['tax_code'];
+    $gst = str_replace("-"," INPUT @ ",$linesTax['tax_code'].'%');
     $xmllinesTax.= 
     "<LEDGERENTRIES.LIST>
         <ADDLALLOCTYPE/>
@@ -154,8 +154,8 @@ $xml.= '<ENVELOPE>
       <ADDRESS>'.$address1.'</ADDRESS>
       <ADDRESS>'.$value['vendor_city'].'</ADDRESS>
      </ADDRESS.LIST>
-     <DATE>20230401</DATE>
-     <REFERENCEDATE>20230401</REFERENCEDATE>
+     <DATE>'.$invoice_date.'</DATE>
+     <REFERENCEDATE>'.$invoice_date.'</REFERENCEDATE>
      <BILLOFLADINGDATE></BILLOFLADINGDATE>
      <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
@@ -168,7 +168,7 @@ $xml.= '<ENVELOPE>
      <PARTYNAME>'.$name.'</PARTYNAME>
      <PARTYLEDGERNAME>'.$name.'</PARTYLEDGERNAME>
      <BUYERADDRESSTYPE/>
-     <REFERENCE>'.$value['vendor_invoice_number'].'</REFERENCE>
+     <REFERENCE>'.$value['invoice_code'].'</REFERENCE>
      <PARTYMAILINGNAME>'.$name.'</PARTYMAILINGNAME>
      <PARTYPINCODE>'.$value['vendor_postcode'].'</PARTYPINCODE>
      <CONSIGNEEMAILINGNAME>'.$name.'</CONSIGNEEMAILINGNAME>
@@ -335,7 +335,7 @@ $xml.= '<ENVELOPE>
 
     curl_close($curl);
 
-    echo $response;die;
+    //echo $response;die;
 
    
     if ($err) {

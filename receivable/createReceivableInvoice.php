@@ -15,10 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-//echo "<pre>";print_r($value);die;
+echo "<pre>";print_r($value);die;
 $date=date_create($value['invoice_date']);
-$invoice_date = date_format($date,"Ymd");
- 
+$invoice_date= date_format($date,"Ymd");
+$name =  str_replace("&","&amp;",$value['customer_name']);
+$address1=  str_replace("&","&amp;",$value['customer_site_addr1']);
+$customer_gst=  str_replace("GSTIN:","",$_POST['customer_gst']);
 
 $xmllinesTax = '';
 
@@ -69,12 +71,13 @@ $xmllines = '';
 foreach($value['invoice_lines'] as $lines)
 {
     //$quentity = floatval($lines['quantity']);
+    $line_description=  str_replace("&","&amp;",$lines['description']);
 
     $xmllines.= "<ALLINVENTORYENTRIES.LIST>
     <BASICUSERDESCRIPTION.LIST TYPE='String'>
-      <BASICUSERDESCRIPTION>".$lines['description']."</BASICUSERDESCRIPTION>
+      <BASICUSERDESCRIPTION>".$line_description."</BASICUSERDESCRIPTION>
     </BASICUSERDESCRIPTION.LIST>
-    <STOCKITEMNAME>Item-1</STOCKITEMNAME>
+    <STOCKITEMNAME>Item</STOCKITEMNAME>
     <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
     <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
     <ISAUTONEGATE>No</ISAUTONEGATE>
@@ -145,35 +148,35 @@ $xml.="<ENVELOPE>
    <TALLYMESSAGE xmlns:UDF='TallyUDF'>
     <VOUCHER REMOTEID='' VCHTYPE='Sales' ACTION='Create' OBJVIEW='Invoice Voucher View'>
      <ADDRESS.LIST TYPE='String'>
-      <ADDRESS>".$value['customer_site_addr1']."</ADDRESS>
+      <ADDRESS>".$address1."</ADDRESS>
       <ADDRESS>".$value['customer_site_city']."</ADDRESS>
      </ADDRESS.LIST>
      <BASICBUYERADDRESS.LIST TYPE='String'>
-      <BASICBUYERADDRESS>".$value['customer_site_addr1']."</BASICBUYERADDRESS>
+      <BASICBUYERADDRESS>".$address1."</BASICBUYERADDRESS>
       <BASICBUYERADDRESS>".$value['customer_site_city']."</BASICBUYERADDRESS>
      </BASICBUYERADDRESS.LIST>
-     <DATE>20220801</DATE>
+     <DATE>20230401</DATE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
      <STATENAME>".$value['customer_site_state']."</STATENAME>
      <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
      <COUNTRYOFRESIDENCE>".$value['customer_country']."</COUNTRYOFRESIDENCE>
-     <PARTYGSTIN>".$value['customer_gst']."</PARTYGSTIN>
+     <PARTYGSTIN>".$customer_gst."</PARTYGSTIN>
      <PLACEOFSUPPLY>".$value['customer_site_state']."</PLACEOFSUPPLY>
      <CLASSNAME/>
-     <PARTYNAME>".$value['customer_name']."</PARTYNAME>
-     <PARTYLEDGERNAME>".$value['customer_name']."</PARTYLEDGERNAME>
+     <PARTYNAME>".$name."</PARTYNAME>
+     <PARTYLEDGERNAME>".$name."</PARTYLEDGERNAME>
      <BUYERADDRESSTYPE/>
-     <PARTYMAILINGNAME>".$value['customer_name']."</PARTYMAILINGNAME>
-     <PARTYPINCODE>".$value['customer_site_postcode']."</PARTYPINCODE>
-     <CONSIGNEEMAILINGNAME>".$value['customer_name']."</CONSIGNEEMAILINGNAME>
+     <PARTYMAILINGNAME>".$name."</PARTYMAILINGNAME>
+     <PARTYPINCODE>".$name."</PARTYPINCODE>
+     <CONSIGNEEMAILINGNAME>".$name."</CONSIGNEEMAILINGNAME>
      <CONSIGNEEPINCODE>".$value['customer_site_postcode']."</CONSIGNEEPINCODE>
      <CONSIGNEESTATENAME>".$value['customer_site_state']."</CONSIGNEESTATENAME>
-     <VOUCHERNUMBER>".$value['customer_site_postcode']."</VOUCHERNUMBER>
-     <BASICBASEPARTYNAME>".$value['customer_name']."</BASICBASEPARTYNAME>
+     <VOUCHERNUMBER>".$value['invoice_code']."</VOUCHERNUMBER>
+     <BASICBASEPARTYNAME>".$name."</BASICBASEPARTYNAME>
      <CSTFORMISSUETYPE/>
      <CSTFORMRECVTYPE/>
      <PERSISTEDVIEW>Invoice Voucher View</PERSISTEDVIEW>
-     <BASICBUYERNAME>".$value['customer_name']."</BASICBUYERNAME>
+     <BASICBUYERNAME>".$name."</BASICBUYERNAME>
      <PARTYADDRESSTYPE/>
      <CONSIGNEECOUNTRYNAME>".$value['customer_country']."</CONSIGNEECOUNTRYNAME>
      <VCHGSTCLASS/>
@@ -183,7 +186,7 @@ $xml.="<ENVELOPE>
      <ASORIGINAL>No</ASORIGINAL>
      <FORJOBCOSTING>No</FORJOBCOSTING>
      <ISOPTIONAL>No</ISOPTIONAL>
-     <EFFECTIVEDATE>20220801</EFFECTIVEDATE>
+     <EFFECTIVEDATE>20230401</EFFECTIVEDATE>
      <USEFOREXCISE>No</USEFOREXCISE>
      <USEFORINTEREST>No</USEFORINTEREST>
      <USEFORGAINLOSS>No</USEFORGAINLOSS>
@@ -216,9 +219,9 @@ $xml.="<ENVELOPE>
      <ORDERLINESTATUS>No</ORDERLINESTATUS>
      <ISVATDUTYPAID>Yes</ISVATDUTYPAID>
      <ISDELETEDVCHRETAINED>No</ISDELETEDVCHRETAINED>
-     <CURRPARTYLEDGERNAME>".$value['customer_name']."</CURRPARTYLEDGERNAME>
-     <CURRBASICBUYERNAME>".$value['customer_name']."</CURRBASICBUYERNAME>
-     <CURRPARTYNAME>".$value['customer_name']."</CURRPARTYNAME>
+     <CURRPARTYLEDGERNAME>".$name."</CURRPARTYLEDGERNAME>
+     <CURRBASICBUYERNAME>".$name."</CURRBASICBUYERNAME>
+     <CURRPARTYNAME>".$name."</CURRPARTYNAME>
      <CURRBUYERADDRESSTYPE/>
      <CURRPARTYADDRESSTYPE/>
      <CURRSTATENAME>".$value['customer_site_state']."</CURRSTATENAME>
@@ -240,7 +243,7 @@ $xml.="<ENVELOPE>
      <ORIGINVOICEDETAILS.LIST>      </ORIGINVOICEDETAILS.LIST>
      <INVOICEEXPORTLIST.LIST>      </INVOICEEXPORTLIST.LIST>
      <LEDGERENTRIES.LIST>
-      <LEDGERNAME>".$value['customer_name']."</LEDGERNAME>
+      <LEDGERNAME>".$name."</LEDGERNAME>
       <GSTCLASS/>
       <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
       <LEDGERFROMITEM>No</LEDGERFROMITEM>
