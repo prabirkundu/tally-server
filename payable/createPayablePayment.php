@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-//print_r($value);die;
+print_r($value);die;
 $name =  str_replace("&","&amp;",$value['vendor_name']);
 
 $xml="<ENVELOPE>

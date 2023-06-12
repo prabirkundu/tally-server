@@ -168,7 +168,7 @@ $xml.= '<ENVELOPE>
      <PARTYNAME>'.$name.'</PARTYNAME>
      <PARTYLEDGERNAME>'.$name.'</PARTYLEDGERNAME>
      <BUYERADDRESSTYPE/>
-     <REFERENCE>'.$value['invoice_code'].'</REFERENCE>
+     <REFERENCE>'.$value['vendor_invoice_number'].'</REFERENCE>
      <PARTYMAILINGNAME>'.$name.'</PARTYMAILINGNAME>
      <PARTYPINCODE>'.$value['vendor_postcode'].'</PARTYPINCODE>
      <CONSIGNEEMAILINGNAME>'.$name.'</CONSIGNEEMAILINGNAME>
@@ -335,7 +335,7 @@ $xml.= '<ENVELOPE>
 
     curl_close($curl);
 
-    //echo $response;die;
+    echo $response;die;
 
    
     if ($err) {
