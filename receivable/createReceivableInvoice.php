@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-echo "<pre>";print_r($value);die;
+//echo "<pre>";print_r($value);die;
 $date=date_create($value['invoice_date']);
 $invoice_date= date_format($date,"Ymd");
 $name =  str_replace("&","&amp;",$value['customer_name']);
@@ -23,13 +23,16 @@ $address1=  str_replace("&","&amp;",$value['customer_site_addr1']);
 $customer_gst=  str_replace("GSTIN:","",$_POST['customer_gst']);
 
 $xmllinesTax = '';
+$total = 0;
 
 foreach($value['invoice_tax'] as $linesTax)
 {
+    $gst = $linesTax['tax_code'];
+    $total = $total + $linesTax["tax_value"];
     $xmllinesTax.= 
     "<LEDGERENTRIES.LIST>
     <ROUNDTYPE/>
-    <LEDGERNAME>".$linesTax['tax_code']."</LEDGERNAME>
+    <LEDGERNAME>".$gst."</LEDGERNAME>
     <VOUCHERFBTCATEGORY/>
     <GSTCLASS/>
     <ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>
@@ -37,8 +40,8 @@ foreach($value['invoice_tax'] as $linesTax)
     <ISPARTYLEDGER>No</ISPARTYLEDGER>
     <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
     <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-    <AMOUNT>".$linesTax["tax_value"]."</AMOUNT>
-    <VATEXPAMOUNT>".$linesTax["tax_value"]."</VATEXPAMOUNT>
+    <AMOUNT>".number_format($linesTax["tax_value"],2,'.',',')."</AMOUNT>
+    <VATEXPAMOUNT>".number_format($linesTax["tax_value"],2,'.',',')."</VATEXPAMOUNT>
     <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
     <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
     <BILLALLOCATIONS.LIST>       </BILLALLOCATIONS.LIST>
@@ -71,6 +74,7 @@ $xmllines = '';
 foreach($value['invoice_lines'] as $lines)
 {
     //$quentity = floatval($lines['quantity']);
+    $total = $total + $lines['line_amount'];
     $line_description=  str_replace("&","&amp;",$lines['description']);
 
     $xmllines.= "<ALLINVENTORYENTRIES.LIST>
@@ -250,14 +254,14 @@ $xml.="<ENVELOPE>
       <ISPARTYLEDGER>No</ISPARTYLEDGER>
       <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
       <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-      <AMOUNT>-".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
+      <AMOUNT>-".number_format($total,2,'.',',')."</AMOUNT>
       <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
       <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
       <BILLALLOCATIONS.LIST>
        <NAME>".$value['invoice_code']."</NAME>
        <BILLTYPE>New Ref</BILLTYPE>
        <TDSDEDUCTEEISSPECIALRATE>No</TDSDEDUCTEEISSPECIALRATE>
-       <AMOUNT>-".number_format($value['total_amount'],2,'.',',')."</AMOUNT>
+       <AMOUNT>-".number_format($total,2,'.',',')."</AMOUNT>
        <INTERESTCOLLECTION.LIST>        </INTERESTCOLLECTION.LIST>
        <STBILLCATEGORIES.LIST>        </STBILLCATEGORIES.LIST>
       </BILLALLOCATIONS.LIST>

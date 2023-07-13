@@ -97,7 +97,7 @@ $xml="<ENVELOPE>
   <REQUESTDATA>
    <TALLYMESSAGE xmlns:UDF='TallyUDF'>
     <VOUCHER REMOTEID='' VCHTYPE='Payment' ACTION='Create' OBJVIEW='Accounting Voucher View'>
-     <DATE>20230401</DATE>
+     <DATE>".$payment_date."</DATE>
      <VOUCHERTYPENAME>Payment</VOUCHERTYPENAME>
      <PARTYLEDGERNAME>".$name."</PARTYLEDGERNAME>
      <VOUCHERNUMBER>".$value['payment_no']."</VOUCHERNUMBER>
@@ -114,7 +114,7 @@ $xml="<ENVELOPE>
      <AUDITED>No</AUDITED>
      <FORJOBCOSTING>No</FORJOBCOSTING>
      <ISOPTIONAL>No</ISOPTIONAL>
-     <EFFECTIVEDATE>20230401</EFFECTIVEDATE>
+     <EFFECTIVEDATE>".$payment_date."</EFFECTIVEDATE>
      <USEFOREXCISE>No</USEFOREXCISE>
      <ISFORJOBWORKIN>No</ISFORJOBWORKIN>
      <ALLOWCONSUMPTION>No</ALLOWCONSUMPTION>
@@ -279,7 +279,7 @@ $xml="<ENVELOPE>
 
     curl_close($curl);
 
-    //echo $response;die;
+    //echo"1";echo $response;die;
 
     if ($err) {
         //echo "cURL Error #:" . $err;

@@ -27,8 +27,17 @@ $total = 0;
 
 foreach($value['invoice_tax'] as $linesTax)
 {
-    $gst = str_replace("-"," OUTPUT @ ",$linesTax['tax_code'].'%');
-    $total = $total + $linesTax["tax_value"];
+    if($linesTax['tax_code'] !=  "GST-EXEMPT" ){
+      $gst = str_replace("-"," OUTPUT @ ",$linesTax['tax_code'].'%');
+      $total = $total + $linesTax["tax_value"];
+      $tax_value = $linesTax["tax_value"];
+    }else{
+      $gst = $linesTax['tax_code'];
+      $total = $total + 0;
+      $tax_value =0;
+    }
+    
+    
     $xmllinesTax.= 
     "<LEDGERENTRIES.LIST>
     <ROUNDTYPE/>
@@ -40,8 +49,8 @@ foreach($value['invoice_tax'] as $linesTax)
     <ISPARTYLEDGER>No</ISPARTYLEDGER>
     <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
     <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-    <AMOUNT>".number_format($linesTax["tax_value"],2,'.',',')."</AMOUNT>
-    <VATEXPAMOUNT>".number_format($linesTax["tax_value"],2,'.',',')."</VATEXPAMOUNT>
+    <AMOUNT>".number_format($tax_value,2,'.',',')."</AMOUNT>
+    <VATEXPAMOUNT>".number_format($tax_value,2,'.',',')."</VATEXPAMOUNT>
     <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
     <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
     <BILLALLOCATIONS.LIST>       </BILLALLOCATIONS.LIST>
