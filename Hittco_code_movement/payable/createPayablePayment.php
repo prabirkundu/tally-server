@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-//print_r($value);die;
+print_r($value);die;
 $date=date_create($value['payment_date']);
 $payment_date= date_format($date,"Ymd");
 $name =  str_replace("&","&amp;",$value['vendor_name']);

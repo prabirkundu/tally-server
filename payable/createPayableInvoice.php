@@ -138,7 +138,7 @@ foreach($value['invoice_lines'] as $lines)
 
 
 $xmlTds = '';
-if($value['is_tds_apilicable'] == 1){
+if($value['is_tds_applicable'] == 1){
 
      $total = $total-$value['tds_amount'];
      $xmlTds =  "<LEDGERENTRIES.LIST>
