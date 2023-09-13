@@ -21,52 +21,56 @@ $invoice_date = date_format($date,"Ymd");
 $name =  str_replace("&","&amp;",$value['vendor_name']);
 $address1=  str_replace("&","&amp;",$value['vendor_addr1']);
 $vendor_gst=  str_replace("GSTIN:","",$_POST['vendor_gst']);
-$total = $value['total_amount'];
 
 $xmllinesTax = '';
+$total = 0;
 
 
 foreach($value['invoice_tax'] as $linesTax)
 {
-    $gst = $linesTax['tax_code'];
-    $xmllinesTax.= 
-    "<LEDGERENTRIES.LIST>
-        <ADDLALLOCTYPE/>
-        <ROUNDTYPE/>
-        <LEDGERNAME>".$gst."</LEDGERNAME>
-        <VOUCHERFBTCATEGORY/>
-        <GSTCLASS/>
-        <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
-        <LEDGERFROMITEM>No</LEDGERFROMITEM>
-        <ISPARTYLEDGER>No</ISPARTYLEDGER>
-        <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
-        <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-        <AMOUNT>-".number_format($linesTax['tax_value'],2,'.',',')."</AMOUNT>
-        <VATEXPAMOUNT>-".number_format($linesTax['tax_value'],2,'.',',')."</VATEXPAMOUNT>
-        <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
-        <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
-        <BILLALLOCATIONS.LIST>       </BILLALLOCATIONS.LIST>
-        <INTERESTCOLLECTION.LIST>       </INTERESTCOLLECTION.LIST>
-        <OLDAUDITENTRIES.LIST>       </OLDAUDITENTRIES.LIST>
-        <ACCOUNTAUDITENTRIES.LIST>       </ACCOUNTAUDITENTRIES.LIST>
-        <AUDITENTRIES.LIST>       </AUDITENTRIES.LIST>
-        <INPUTCRALLOCS.LIST>       </INPUTCRALLOCS.LIST>
-        <INVENTORYALLOCATIONS.LIST>       </INVENTORYALLOCATIONS.LIST>
-        <DUTYHEADDETAILS.LIST>       </DUTYHEADDETAILS.LIST>
-        <EXCISEDUTYHEADDETAILS.LIST>       </EXCISEDUTYHEADDETAILS.LIST>
-        <RATEDETAILS.LIST>       </RATEDETAILS.LIST>
-        <SUMMARYALLOCS.LIST>       </SUMMARYALLOCS.LIST>
-        <STPYMTDETAILS.LIST>       </STPYMTDETAILS.LIST>
-        <EXCISEPAYMENTALLOCATIONS.LIST>       </EXCISEPAYMENTALLOCATIONS.LIST>
-        <TAXBILLALLOCATIONS.LIST>       </TAXBILLALLOCATIONS.LIST>
-        <TAXOBJECTALLOCATIONS.LIST>       </TAXOBJECTALLOCATIONS.LIST>
-        <TDSEXPENSEALLOCATIONS.LIST>       </TDSEXPENSEALLOCATIONS.LIST>
-        <VATSTATUTORYDETAILS.LIST>       </VATSTATUTORYDETAILS.LIST>
-        <REFVOUCHERDETAILS.LIST>       </REFVOUCHERDETAILS.LIST>
-        <INVOICEWISEDETAILS.LIST>       </INVOICEWISEDETAILS.LIST>
-        <VATITCDETAILS.LIST>       </VATITCDETAILS.LIST>
-        <ADVANCETAXDETAILS.LIST>       </ADVANCETAXDETAILS.LIST>
-    </LEDGERENTRIES.LIST>";
+    if($linesTax['tax_value'] != ""){
+        $gst = str_replace("-"," INPUT @ ",$linesTax['tax_code'].'%');
+        $total = $total + $linesTax["tax_value"];
+        $xmllinesTax.= 
+        "<LEDGERENTRIES.LIST>
+            <ADDLALLOCTYPE/>
+            <ROUNDTYPE/>
+            <LEDGERNAME>".$gst."</LEDGERNAME>
+            <VOUCHERFBTCATEGORY/>
+            <GSTCLASS/>
+            <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
+            <LEDGERFROMITEM>No</LEDGERFROMITEM>
+            <ISPARTYLEDGER>No</ISPARTYLEDGER>
+            <ISLASTDEEMEDPOSITIVE>Yes</ISLASTDEEMEDPOSITIVE>
+            <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
+            <AMOUNT>-".number_format($linesTax['tax_value'],2,'.',',')."</AMOUNT>
+            <VATEXPAMOUNT>-".number_format($linesTax['tax_value'],2,'.',',')."</VATEXPAMOUNT>
+            <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
+            <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
+            <BILLALLOCATIONS.LIST>       </BILLALLOCATIONS.LIST>
+            <INTERESTCOLLECTION.LIST>       </INTERESTCOLLECTION.LIST>
+            <OLDAUDITENTRIES.LIST>       </OLDAUDITENTRIES.LIST>
+            <ACCOUNTAUDITENTRIES.LIST>       </ACCOUNTAUDITENTRIES.LIST>
+            <AUDITENTRIES.LIST>       </AUDITENTRIES.LIST>
+            <INPUTCRALLOCS.LIST>       </INPUTCRALLOCS.LIST>
+            <INVENTORYALLOCATIONS.LIST>       </INVENTORYALLOCATIONS.LIST>
+            <DUTYHEADDETAILS.LIST>       </DUTYHEADDETAILS.LIST>
+            <EXCISEDUTYHEADDETAILS.LIST>       </EXCISEDUTYHEADDETAILS.LIST>
+            <RATEDETAILS.LIST>       </RATEDETAILS.LIST>
+            <SUMMARYALLOCS.LIST>       </SUMMARYALLOCS.LIST>
+            <STPYMTDETAILS.LIST>       </STPYMTDETAILS.LIST>
+            <EXCISEPAYMENTALLOCATIONS.LIST>       </EXCISEPAYMENTALLOCATIONS.LIST>
+            <TAXBILLALLOCATIONS.LIST>       </TAXBILLALLOCATIONS.LIST>
+            <TAXOBJECTALLOCATIONS.LIST>       </TAXOBJECTALLOCATIONS.LIST>
+            <TDSEXPENSEALLOCATIONS.LIST>       </TDSEXPENSEALLOCATIONS.LIST>
+            <VATSTATUTORYDETAILS.LIST>       </VATSTATUTORYDETAILS.LIST>
+            <REFVOUCHERDETAILS.LIST>       </REFVOUCHERDETAILS.LIST>
+            <INVOICEWISEDETAILS.LIST>       </INVOICEWISEDETAILS.LIST>
+            <VATITCDETAILS.LIST>       </VATITCDETAILS.LIST>
+            <ADVANCETAXDETAILS.LIST>       </ADVANCETAXDETAILS.LIST>
+           </LEDGERENTRIES.LIST>";
+      }
+    
 }
 
 $xmllines = '';
@@ -76,6 +80,9 @@ foreach($value['invoice_lines'] as $lines)
     //$quentity = floatval($lines['line_quantity']); 
     $quentity = $lines['line_quantity'];
     $line_description=  str_replace("&","&amp;",$lines['line_description']);
+    $account_code_description=  str_replace("&","&amp;",$lines['account_code_description']);
+    $total = $total + $lines['line_amount'];
+
 
     $xmllines.=
     "<ALLINVENTORYENTRIES.LIST>
@@ -96,7 +103,7 @@ foreach($value['invoice_lines'] as $lines)
         <TEMPRATE>".number_format($lines['unit_price'],2,'.',',')."</TEMPRATE>
         <BATCHALLOCATIONS.LIST>       </BATCHALLOCATIONS.LIST>
         <ACCOUNTINGALLOCATIONS.LIST>
-        <LEDGERNAME>".$lines['account_code_description']."</LEDGERNAME>
+        <LEDGERNAME>".$account_code_description."</LEDGERNAME>
         <GSTCLASS/>
         <ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>
         <LEDGERFROMITEM>No</LEDGERFROMITEM>
@@ -135,7 +142,6 @@ foreach($value['invoice_lines'] as $lines)
         <EXPENSEALLOCATIONS.LIST>       </EXPENSEALLOCATIONS.LIST>
    </ALLINVENTORYENTRIES.LIST>";
 }
-
 
 $xmlTds = '';
 if($value['is_tds_applicable'] == 1){
@@ -180,6 +186,7 @@ if($value['is_tds_applicable'] == 1){
 
 }
 
+
 $xml = '';
 $xml.= '<ENVELOPE>
 <HEADER>
@@ -200,8 +207,8 @@ $xml.= '<ENVELOPE>
       <ADDRESS>'.$address1.'</ADDRESS>
       <ADDRESS>'.$value['vendor_city'].'</ADDRESS>
      </ADDRESS.LIST>
-     <DATE>20230401</DATE>
-     <REFERENCEDATE>20230401</REFERENCEDATE>
+     <DATE>'.$invoice_date.'</DATE>
+     <REFERENCEDATE>'.$invoice_date.'</REFERENCEDATE>
      <BILLOFLADINGDATE></BILLOFLADINGDATE>
      <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
@@ -219,7 +226,7 @@ $xml.= '<ENVELOPE>
      <PARTYPINCODE>'.$value['vendor_postcode'].'</PARTYPINCODE>
      <CONSIGNEEMAILINGNAME>'.$name.'</CONSIGNEEMAILINGNAME>
      <CONSIGNEESTATENAME>'.$value['vendor_state'].'</CONSIGNEESTATENAME>
-     <VOUCHERNUMBER>'.$value['invoice_code'].'</VOUCHERNUMBER>
+     <VOUCHERNUMBER>'.$value['vendor_invoice_number'].'</VOUCHERNUMBER>
      <BASICBASEPARTYNAME>'.$name.'</BASICBASEPARTYNAME>
      <CSTFORMISSUETYPE/>
      <CSTFORMRECVTYPE/>
@@ -305,7 +312,7 @@ $xml.= '<ENVELOPE>
       <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
       <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
       <BILLALLOCATIONS.LIST>
-       <NAME>'.$value['invoice_code'].'</NAME>
+       <NAME>'.$value['vendor_invoice_number'].'</NAME>
        <BILLTYPE>New Ref</BILLTYPE>
        <TDSDEDUCTEEISSPECIALRATE>No</TDSDEDUCTEEISSPECIALRATE>
        <AMOUNT>'.number_format($total,2,'.',',').'</AMOUNT>
@@ -334,7 +341,7 @@ $xml.= '<ENVELOPE>
       <ADVANCETAXDETAILS.LIST>       </ADVANCETAXDETAILS.LIST>
      </LEDGERENTRIES.LIST>
      '.$xmllinesTax.'
-     '.$xmlTds.'
+      '.$xmlTds.'
      <VCHLEDTOTALTREE.LIST>      </VCHLEDTOTALTREE.LIST>
      <PAYROLLMODEOFPAYMENT.LIST>      </PAYROLLMODEOFPAYMENT.LIST>
      <ATTDRECORDS.LIST>      </ATTDRECORDS.LIST>
@@ -382,7 +389,7 @@ $xml.= '<ENVELOPE>
 
     curl_close($curl);
 
-    //echo $response;die;
+    ///echo $response;die;
 
    
     if ($err) {

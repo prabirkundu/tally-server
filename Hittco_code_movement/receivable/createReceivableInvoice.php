@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 
 $value = $_POST;
-echo "<pre>";print_r($value);die;
+//echo "<pre>";print_r($value);die;
 $date=date_create($value['invoice_date']);
 $invoice_date= date_format($date,"Ymd");
 $name =  str_replace("&","&amp;",$value['customer_name']);
@@ -27,8 +27,17 @@ $total = 0;
 
 foreach($value['invoice_tax'] as $linesTax)
 {
-    $gst = $linesTax['tax_code'];
-    $total = $total + $linesTax["tax_value"];
+    if($linesTax['tax_code'] !=  "GST-EXEMPT" ){
+      $gst = str_replace("-"," OUTPUT @ ",$linesTax['tax_code'].'%');
+      $total = $total + $linesTax["tax_value"];
+      $tax_value = $linesTax["tax_value"];
+    }else{
+      $gst = $linesTax['tax_code'];
+      $total = $total + 0;
+      $tax_value =0;
+    }
+    
+    
     $xmllinesTax.= 
     "<LEDGERENTRIES.LIST>
     <ROUNDTYPE/>
@@ -40,8 +49,8 @@ foreach($value['invoice_tax'] as $linesTax)
     <ISPARTYLEDGER>No</ISPARTYLEDGER>
     <ISLASTDEEMEDPOSITIVE>No</ISLASTDEEMEDPOSITIVE>
     <ISCAPVATNOTCLAIMED>No</ISCAPVATNOTCLAIMED>
-    <AMOUNT>".number_format($linesTax["tax_value"],2,'.',',')."</AMOUNT>
-    <VATEXPAMOUNT>".number_format($linesTax["tax_value"],2,'.',',')."</VATEXPAMOUNT>
+    <AMOUNT>".number_format($tax_value,2,'.',',')."</AMOUNT>
+    <VATEXPAMOUNT>".number_format($tax_value,2,'.',',')."</VATEXPAMOUNT>
     <SERVICETAXDETAILS.LIST>       </SERVICETAXDETAILS.LIST>
     <BANKALLOCATIONS.LIST>       </BANKALLOCATIONS.LIST>
     <BILLALLOCATIONS.LIST>       </BILLALLOCATIONS.LIST>
@@ -159,7 +168,7 @@ $xml.="<ENVELOPE>
       <BASICBUYERADDRESS>".$address1."</BASICBUYERADDRESS>
       <BASICBUYERADDRESS>".$value['customer_site_city']."</BASICBUYERADDRESS>
      </BASICBUYERADDRESS.LIST>
-     <DATE>20230401</DATE>
+     <DATE>".$invoice_date."</DATE>
      <VATDEALERTYPE>Regular</VATDEALERTYPE>
      <STATENAME>".$value['customer_site_state']."</STATENAME>
      <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
@@ -190,7 +199,7 @@ $xml.="<ENVELOPE>
      <ASORIGINAL>No</ASORIGINAL>
      <FORJOBCOSTING>No</FORJOBCOSTING>
      <ISOPTIONAL>No</ISOPTIONAL>
-     <EFFECTIVEDATE>20230401</EFFECTIVEDATE>
+     <EFFECTIVEDATE>".$invoice_date."</EFFECTIVEDATE>
      <USEFOREXCISE>No</USEFOREXCISE>
      <USEFORINTEREST>No</USEFORINTEREST>
      <USEFORGAINLOSS>No</USEFORGAINLOSS>
