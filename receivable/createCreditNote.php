@@ -14,8 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
   exit(0);
 }
 
+
 $value = $_POST;
-//print_r($value);die;
+print_r($value);die;
 $date=date_create($value['invoice_date']);
 $invoice_date= date_format($date,"Ymd");
 $name =  str_replace("&","&amp;",$value['customer_name']);

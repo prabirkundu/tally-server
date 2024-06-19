@@ -15,8 +15,8 @@
 
         exit(0);
     }
-    //print_r($_POST);die;
-    // $value = $_POST;
+    print_r($_POST);die;
+    $value = $_POST;
 
     $business_unit = $_POST['business_unit'];
 
@@ -107,6 +107,8 @@
         $err = curl_error($curl);
     
         curl_close($curl);
+
+        echo $response;die;
 
         if ($err) {
             array_push($dataArray,$err);

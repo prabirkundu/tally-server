@@ -15,7 +15,7 @@
 
         exit(0);
     }
-    //print_r($_POST['additionalFields']['customer_site_state']);die;
+    //print_r($_POST);die;
     
     $business_unit = $_POST['business_unit'];
 
@@ -54,7 +54,7 @@
                 <MAILINGNAME>'.$name.'</MAILINGNAME>
                 </MAILINGNAME.LIST>
                 <EMAIL>'.$value['contact_email'].'</EMAIL>
-                <PRIORSTATENAME>'.$_POST['additionalFields']['customer_site_state'].'</PRIORSTATENAME>
+                <PRIORSTATENAME>'.$value['customer_site_state'].'</PRIORSTATENAME>
                 <PINCODE>'.$value['customer_site_postcode'].'</PINCODE>
                 <COUNTRYNAME>'.$value['country_name'].'</COUNTRYNAME>
                 <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
@@ -66,7 +66,7 @@
                 <GSTTYPE/>
                 <APPROPRIATEFOR/>
                 <PARTYGSTIN>'.$customer_gst.'</PARTYGSTIN>
-                <LEDSTATENAME>'.$_POST['additionalFields']['customer_site_state'].'</LEDSTATENAME>
+                <LEDSTATENAME>'.$value['customer_site_state'].'</LEDSTATENAME>
                 <LANGUAGENAME.LIST>
                 <NAME.LIST TYPE="String">
                 <NAME>'.$name.'</NAME>
@@ -104,7 +104,7 @@
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => "",
             CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_TIMEOUT => 500,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_CUSTOMREQUEST => "POST",
             CURLOPT_POSTFIELDS =>$xml,
@@ -146,7 +146,7 @@
                         );
                         $curl = curl_init();
                         curl_setopt_array($curl, array(
-                        CURLOPT_URL => "http://localhost:8080/metricserp-tallyErp9/customer/fetchCustomer.php",
+                        CURLOPT_URL => "http://localhost/metricserp-tallyErp9/customer/fetchCustomer.php",
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
