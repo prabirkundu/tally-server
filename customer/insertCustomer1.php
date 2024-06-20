@@ -15,7 +15,8 @@
 
         exit(0);
     }
-    //print_r($_POST['additionalFields']['customer_site_state']);die;
+    //print_r($_POST);die;
+    
     
     $business_unit = $_POST['business_unit'];
 
@@ -25,12 +26,11 @@
     foreach($business_unit as $company)
     {
         $value = $_POST['data'];
-        //$additional_value = $_POST['additional_data'];
+        $additional_value = $_POST['additional_data'];
         $company_name = $company['unit_description'];
+       
+        //$name =  str_replace("&","&amp;",$value['customer_name']);
         $name =  str_replace("&","&amp;",$value['customer_name']);
-        $address1=  str_replace("&","&amp;",$value['customer_site_addr1']);
-        $customer_gst=  str_replace("GSTIN:","",$_POST['customer_gst']);
-        //echo $customer_gst;die;
         $xml = '<ENVELOPE>
             <HEADER>
             <TALLYREQUEST>IMPORT DATA</TALLYREQUEST>
@@ -47,26 +47,26 @@
             <TALLYMESSAGE xmlns:UDF="TallyUDF">
             <LEDGER NAME="'.$name.'" RESERVEDNAME="">
                 <ADDRESS.LIST TYPE="String">
-                <ADDRESS>'.$address1.'</ADDRESS>
-                <ADDRESS>'.$value['customer_site_city'].'</ADDRESS>
+                <ADDRESS>'.$additional_value['customer_site_addr1'].'</ADDRESS>
+                <ADDRESS>'.$additional_value['customer_site_city'].'</ADDRESS>
                 </ADDRESS.LIST>
                 <MAILINGNAME.LIST TYPE="String">
                 <MAILINGNAME>'.$name.'</MAILINGNAME>
                 </MAILINGNAME.LIST>
                 <EMAIL>'.$value['contact_email'].'</EMAIL>
-                <PRIORSTATENAME>'.$_POST['additionalFields']['customer_site_state'].'</PRIORSTATENAME>
-                <PINCODE>'.$value['customer_site_postcode'].'</PINCODE>
-                <COUNTRYNAME>'.$value['country_name'].'</COUNTRYNAME>
+                <PRIORSTATENAME>'.$additional_value['customer_site_state'].'</PRIORSTATENAME>
+                <PINCODE>'.$additional_value['customer_site_postcode'].'</PINCODE>
+                <COUNTRYNAME>'.$additional_value['country_name'].'</COUNTRYNAME>
                 <GSTREGISTRATIONTYPE>Regular</GSTREGISTRATIONTYPE>
                 <VATDEALERTYPE>Regular</VATDEALERTYPE>
                 <PARENT>Sundry Debtors</PARENT>
-                <COUNTRYOFRESIDENCE>'.$value['country_name'].'</COUNTRYOFRESIDENCE>
+                <COUNTRYOFRESIDENCE>'.$additional_value['country_name'].'</COUNTRYOFRESIDENCE>
                 <LEDGERPHONE>'.$value['contact_phone'].'</LEDGERPHONE>
                 <LEDGERCONTACT>'.$value['contact_fname'].' '.$value['contact_lname'].'</LEDGERCONTACT>
                 <GSTTYPE/>
                 <APPROPRIATEFOR/>
-                <PARTYGSTIN>'.$customer_gst.'</PARTYGSTIN>
-                <LEDSTATENAME>'.$_POST['additionalFields']['customer_site_state'].'</LEDSTATENAME>
+                <PARTYGSTIN>'.$_POST['customer_gst'].'</PARTYGSTIN>
+                <LEDSTATENAME>'.$additional_value['customer_site_state'].'</LEDSTATENAME>
                 <LANGUAGENAME.LIST>
                 <NAME.LIST TYPE="String">
                 <NAME>'.$name.'</NAME>
@@ -142,15 +142,15 @@
                         //echo "2";
                         //echo "<pre>";print_r($decode);
                         $value = array(
-                            "name" => $name
+                            "name" => $value['customer_name']
                         );
                         $curl = curl_init();
                         curl_setopt_array($curl, array(
-                        CURLOPT_URL => "http://localhost:8080/metricserp-tallyErp9/customer/fetchCustomer.php",
+                        CURLOPT_URL => "http://localhost/metricserp-tallyErp9/customer/fetchCustomer.php",
                         CURLOPT_RETURNTRANSFER => true,
                         CURLOPT_ENCODING => "",
                         CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 500,
+                        CURLOPT_TIMEOUT => 30,
                         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                         CURLOPT_CUSTOMREQUEST => "POST",
                         CURLOPT_POSTFIELDS => $value,
@@ -164,7 +164,7 @@
                             if ($err) {
                                 //echo "cURL Error #:" . $err;
                                 //print_r(json_encode(array('status' => '0','msg' =>$dataArray)));
-                                array_push($errorDataArray,' Error : '.$err);
+                                array_push($errorDataArray,'Error : '.$decode['LINEERROR']);
                             } else {
                                 //print_r(json_encode(array('status' => '1','guid'=>$response1)));
                                 array_push($successDataArray,$response1.'+'.$company['unit_id']);
